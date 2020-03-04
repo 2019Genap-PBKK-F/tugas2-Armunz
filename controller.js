@@ -1,4 +1,3 @@
-var express = require('express');
 var mssql = require('mssql');
 var dbConfig = require('./config');
 
