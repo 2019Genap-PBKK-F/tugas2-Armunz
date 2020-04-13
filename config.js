@@ -1,6 +1,6 @@
 const dbconfiguration = {
     server: '10.199.13.253', 
-    user: 'su',
+    user: 'sa',
     password: 'SaSa1212',
     database: 'nrp05111740000025',
     port: 1433
