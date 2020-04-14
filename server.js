@@ -31,14 +31,14 @@ app.get('/api/mahasiswa', function(request, response){
 
 // Tampilkan data kategori unit
 app.get('/api/kategori-unit', function(request, response){
-   var query = "SELECT * FROM KategoriUnit";
+   var query = "SELECT * FROM [KategoriUnit]";
    execute.execQuery(query, response, null);
 });
 
 // Insert Kategori Unit data
 app.post('/api/kategori-unit', function(request, response){
    console.log("Query: Insert Kategori Unit Data");
-   var query = "INSERT INTO KategoriUnit(id, nama) VALUES('', '')";
+   var query = "INSERT INTO [KategoriUnit](nama) VALUES('')";
    execute.execQuery(query, response, null);
 });
 
@@ -51,7 +51,7 @@ app.put('/api/kategori-unit/:id', function(request, response){
       {name: 'nama', sqlType: sql.VarChar, value:request.body.nama}
    ];
 
-   var query = "UPDATE KategoriUnit SET nama = @nama WHERE id = @id";
+   var query = "UPDATE [KategoriUnit] SET nama = @nama WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -60,7 +60,7 @@ app.delete('/api/kategori-unit/:id', function(request, response){
    console.log("Query: Delete Kategori Unit Data");
 
    var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
-   var query = "DELETE FROM KategoriUnit WHERE id = @id";
+   var query = "DELETE FROM [KategoriUnit] WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -68,20 +68,20 @@ app.delete('/api/kategori-unit/:id', function(request, response){
 // CRUD Unit
 // Tampilkan data Unit
 app.get('/api/unit', function(request, response){
-   var query = "SELECT * FROM Unit";
+   var query = "SELECT * FROM [Unit]";
    execute.execQuery(query, response, null);
 });
 
 // Get KategoriUnit_id
-app.get('/api/kategori-unit-id', function(request, response){
-   var query = "SELECT id FROM KategoriUnit";
+app.get('/api/kategori-unit-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [KategoriUnit]";
    execute.execQuery(query, response, null);
 });
 
 // Insert Unit data
 app.post('/api/unit', function(request, response){
    console.log("Query: Insert Unit Data");
-   var query = "INSERT INTO Unit(id, KategoriUnit_id, nama) VALUES('', '', '')";
+   var query = "INSERT INTO [Unit](KategoriUnit_id, nama) VALUES('', '')";
    execute.execQuery(query, response, null);
 });
 
@@ -95,7 +95,7 @@ app.put('/api/unit/:id', function(request, response){
       {name: 'nama', sqlType: sql.VarChar, value: request.body.nama}
    ];
 
-   var query = "UPDATE Unit SET KategoriUnit_id = @KategoriUnit_id, nama = @nama WHERE id = @id";
+   var query = "UPDATE [Unit] SET KategoriUnit_id = @KategoriUnit_id, nama = @nama WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -104,7 +104,7 @@ app.delete('/api/unit/:id', function(request, response){
    console.log("Query: Delete Unit Data");
 
    var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
-   var query = "DELETE FROM Unit WHERE id = @id";
+   var query = "DELETE FROM [Unit] WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -119,7 +119,7 @@ app.get('/api/data-dasar', function(request, response){
 // Insert Data Dasar data
 app.post('/api/data-dasar', function(request, response){
    console.log("Query: Insert Data Dasar Data");
-   var query = "INSERT INTO DataDasar(id, nama) VALUES('', '')";
+   var query = "INSERT INTO [DataDasar](nama) VALUES('')";
    execute.execQuery(query, response, null);
 });
 
@@ -132,7 +132,7 @@ app.put('/api/data-dasar/:id', function(request, response){
       {name: 'nama', sqlType: sql.VarChar, value: request.body.nama}
    ];
 
-   var query = "UPDATE DataDasar SET nama = @nama WHERE id = @id";
+   var query = "UPDATE [DataDasar] SET nama = @nama WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -141,7 +141,7 @@ app.delete('/api/data-dasar/:id', function(request, response){
    console.log("Query: Delete Data Dasar Data");
 
    var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
-   var query = "DELETE FROM DataDasar WHERE id = @id";
+   var query = "DELETE FROM [DataDasar] WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -149,14 +149,14 @@ app.delete('/api/data-dasar/:id', function(request, response){
 // CRUD Capaian Unit
 // Tampilkan data capaian unit
 app.get('/api/capaian-unit', function(request, response){
-   var query = "SELECT * FROM Capaian_Unit";
+   var query = "SELECT * FROM [Capaian_Unit]";
    execute.execQuery(query, response, null);
 });
 
 // Insert Capaian Unit data
 app.post('/api/capaian-unit', function(request, response){
    console.log("Query: Insert Capaian_Unit Data");
-   var query = "INSERT INTO Capaian_Unit(id, DataDasar_id, Unit_id, waktu, capaian) VALUES('', '', '', '', '')";
+   var query = "INSERT INTO [Capaian_Unit](DataDasar_id, Unit_id, waktu, capaian) VALUES('', '', '', '')";
    execute.execQuery(query, response, null);
 });
 
@@ -172,7 +172,7 @@ app.put('/api/capaian-unit', function(request, response){
       {name: 'capaian', sqlType: sql.Float, value: request.body.capaian}
    ];
 
-   var query = "UPDATE Capaian_Unit SET DataDasar_id = @DataDasar_id, Unit_id = @Unit_id, waktu = @waktu, capaian = @capaian WHERE id = @id";
+   var query = "UPDATE [Capaian_Unit] SET DataDasar_id = @DataDasar_id, Unit_id = @Unit_id, waktu = @waktu, capaian = @capaian WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -181,7 +181,7 @@ app.delete('/api/capaian-unit/:id', function(request, response){
    console.log("Query: Delete Capaian_Unit Data");
 
    var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
-   var query = "DELETE FROM Capaian_Unit WHERE id = @id";
+   var query = "DELETE FROM [Capaian_Unit] WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
