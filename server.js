@@ -153,6 +153,18 @@ app.get('/api/capaian-unit', function(request, response){
    execute.execQuery(query, response, null);
 });
 
+// Get data dasar list
+app.get('/api/data-dasar-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [DataDasar]";
+   execute.execQuery(query, response, null);
+});
+
+// Get unit list
+app.get('/api/unit-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [Unit]";
+   execute.execQuery(query, response, null);
+});
+
 // Insert Capaian Unit data
 app.post('/api/capaian-unit', function(request, response){
    console.log("Query: Insert Capaian_Unit Data");
@@ -161,7 +173,7 @@ app.post('/api/capaian-unit', function(request, response){
 });
 
 //Update Capaian_Unit data
-app.put('/api/capaian-unit', function(request, response){
+app.put('/api/capaian-unit/:id', function(request, response){
    console.log("Query: Update Capaian_Unit Data");
 
    var param = [
