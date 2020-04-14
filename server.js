@@ -72,6 +72,12 @@ app.get('/api/unit', function(request, response){
    execute.execQuery(query, response, null);
 });
 
+// Get KategoriUnit_id
+app.get('/api/kategori-unit-id', function(request, response){
+   var query = "SELECT id FROM KategoriUnit";
+   execute.execQuery(query, response, null);
+});
+
 // Insert Unit data
 app.post('/api/unit', function(request, response){
    console.log("Query: Insert Unit Data");
