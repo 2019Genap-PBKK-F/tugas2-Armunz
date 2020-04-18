@@ -119,7 +119,7 @@ app.get('/api/data-dasar', function(request, response){
 // Insert Data Dasar data
 app.post('/api/data-dasar', function(request, response){
    console.log("Query: Insert Data Dasar Data");
-   var query = "INSERT INTO [DataDasar](nama) VALUES('')";
+   var query = "INSERT INTO [DataDasar](nama, create_date, last_update, expired_date) VALUES('', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
    execute.execQuery(query, response, null);
 });
 
@@ -129,10 +129,14 @@ app.put('/api/data-dasar/:id', function(request, response){
 
    var param = [
       {name: 'id', sqlType: sql.Int, value: request.params.id},
-      {name: 'nama', sqlType: sql.VarChar, value: request.body.nama}
+      {name: 'nama', sqlType: sql.VarChar, value: request.body.nama},
+      {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
+      {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update},
+      {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date}
+
    ];
 
-   var query = "UPDATE [DataDasar] SET nama = @nama WHERE id = @id";
+   var query = "UPDATE [DataDasar] SET nama = @nama, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -160,15 +164,15 @@ app.get('/api/data-dasar-list', function(request, response){
 });
 
 // Get unit list
-app.get('/api/unit-list', function(request, response){
-   var query = "SELECT id, nama as name FROM [Unit]";
+app.get('/api/satuan-kerja-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [SatuanKerja]";
    execute.execQuery(query, response, null);
 });
 
 // Insert Capaian Unit data
 app.post('/api/capaian-unit', function(request, response){
    console.log("Query: Insert Capaian_Unit Data");
-   var query = "INSERT INTO [Capaian_Unit](DataDasar_id, Unit_id, waktu, capaian) VALUES('', '', '', '')";
+   var query = "INSERT INTO [Capaian_Unit](id_satker, id_datadasar, waktu, capaian) VALUES('', '', '', '')";
    execute.execQuery(query, response, null);
 });
 
@@ -178,13 +182,13 @@ app.put('/api/capaian-unit/:id', function(request, response){
 
    var param = [
       {name: 'id', sqlType: sql.Int, value: request.params.id},
-      {name: 'DataDasar_id', sqlType: sql.Int, value: request.body.DataDasar_id},
-      {name: 'Unit_id', sqlType: sql.Int, value: request.body.Unit_id},
-      {name: 'waktu', sqlType: sql.DateTime, value: request.body.waktu},
+      {name: 'id_satker', sqlType: sql.Int, value: request.body.id_satker},
+      {name: 'id_datadasar', sqlType: sql.Int, value: request.body.id_datadasar},
+      {name: 'waktu', sqlType: sql.VarChar, value: request.body.waktu},
       {name: 'capaian', sqlType: sql.Float, value: request.body.capaian}
    ];
 
-   var query = "UPDATE [Capaian_Unit] SET DataDasar_id = @DataDasar_id, Unit_id = @Unit_id, waktu = @waktu, capaian = @capaian WHERE id = @id";
+   var query = "UPDATE [Capaian_Unit] SET id_satker = @id_satker, id_datadasar = @id_datadasar, waktu = @waktu, capaian = @capaian WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -197,7 +201,311 @@ app.delete('/api/capaian-unit/:id', function(request, response){
    execute.execQuery(query, response, param);
 });
 
+// CRUD Indikator Periode
+// Tampilkan Indikator Periode
+app.get('/api/indikator-periode', function(request, response){
+   var query = "SELECT * FROM [Indikator_Periode]";
+   execute.execQuery(query, response, null);
+});
 
+// Get Master Indikator List
+app.get('/api/master-indikator-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [MasterIndikator]";
+   execute.execQuery(query, response, null);
+});
+
+// Get Periode List
+app.get('/api/periode-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [Periode]";
+   execute.execQuery(query, response, null);
+});
+
+// Insert Indikator Periode
+app.post('/api/indikator-periode', function(request, response){
+   console.log("Query: Insert Indikator_Periode Data");
+   var query = "INSERT INTO [Indikator_Periode](id_master, id_periode, bobot) VALUES('', '', '')";
+   execute.execQuery(query, response, null);
+});
+
+//Update Indikator Periode data
+app.put('/api/indikator-periode/:id', function(request, response){
+   console.log("Query: Update Indikator_Periode Data");
+
+   var param = [
+      {name: 'id', sqlType: sql.Int, value: request.params.id},
+      {name: 'id_master', sqlType: sql.Int, value: request.body.id_master},
+      {name: 'id_periode', sqlType: sql.Int, value: request.body.id_periode},
+      {name: 'bobot', sqlType: sql.Float, value: request.body.bobot}
+   ];
+
+   var query = "UPDATE [Indikator_Periode] SET id_master = @id_master, id_periode = @id_periode, bobot = @bobot WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// Delete Indikator Periode
+app.delete('/api/indikator-periode/:id', function(request, response){
+   console.log("Query: Delete Indikator_Periode Data");
+
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [Indikator_Periode] WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+
+// CRUD  Indikator Satuan Kerja
+// Get Indikator Satuan Kerja
+app.get('/api/indikator-satuan-kerja', function(request, response){
+   var query = "SELECT * FROM [Indikator_SatuanKerja]";
+   execute.execQuery(query, response, null);
+});
+
+// Get Satuan Kerja List
+app.get('/api/satuan-kerja-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [SatuanKerja]";
+   execute.execQuery(query, response, null);
+});
+
+// // Trigger Indikator Satuan Kerja Log
+// function trigger_log(response, param){
+//    console.log("Query: Insert Indikator_SatuanKerja_Log Data");
+//    // console.log(param);
+//    var query = "INSERT INTO [Indikator_SatuanKerja_Log](id_periode, id_master, id_satker, capaian, create_date) VALUES('', '', '', '', CONVERT(varchar, GETDATE(), 20))";
+//    execute.execQuery(query, response, param);
+// };
+
+// Insert Indikator Satuan Kerja
+app.post('/api/indikator-satuan-kerja', function(request, response){
+   console.log("Query: Insert Indikator_SatuanKerja Data");
+   var query = "INSERT INTO [Indikator_SatuanKerja](id_periode, id_master, id_satker, bobot, target, capaian, last_update) VALUES('', '', '', '', '', '', CONVERT(varchar, GETDATE(), 20))";
+   execute.execQuery(query, response, null);
+});
+
+//Update Indikator Satuan Kerja data
+app.put('/api/indikator-satuan-kerja/:id', function(request, response){
+   console.log("Query: Update Indikator_SatuanKerja Data");
+
+   var param = [
+      {name: 'id', sqlType: sql.Int, value: request.params.id},
+      {name: 'id_periode', sqlType: sql.Int, value: request.body.id_periode},
+      {name: 'id_master', sqlType: sql.Int, value: request.body.id_master},
+      {name: 'id_satker', sqlType: sql.Int, value: request.body.id_satker},
+      {name: 'bobot', sqlType: sql.Float, value: request.body.bobot},
+      {name: 'target', sqlType: sql.Float, value: request.body.target},
+      {name: 'capaian', sqlType: sql.Float, value: request.body.capaian},
+      {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update}
+   ];
+
+   var query = "UPDATE [Indikator_SatuanKerja] SET id_periode = @id_periode, id_master = @id_master, id_satker = @id_satker, bobot = @bobot, target = @target, capaian = @capaian, last_update = CONVERT(varchar, GETDATE(), 20) WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// Delete Indikator Satuan Kerja
+app.delete('/api/indikator-satuan-kerja/:id', function(request, response){
+   console.log("Query: Delete Indikator_SatuanKerja Data");
+
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [Indikator_SatuanKerja] WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+
+// CRUD Indikator Satuan Kerja Log
+// Get Indikator Satuan Kerja Log
+app.get('/api/indikator-satuan-kerja-log', function(request, response){
+   var query = "SELECT * FROM [Indikator_SatuanKerja_Log]";
+   execute.execQuery(query, response, null);
+});
+
+// Indikator Satuan Kerja List
+app.get('/api/indikator-satuan-kerja-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [Indikator_SatuanKerja]";
+   execute.execQuery(query, response, null);
+});
+
+// Delete Indikator Satuan Kerja Log
+app.delete('/api/indikator-satuan-kerja-log/:id', function(request, response){
+   console.log("Query: Delete Indikator_SatuanKerja_Log Data");
+
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [Indikator_SatuanKerja_Log] WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+
+// CRUD Jenis SatKer
+// Get Jenis Satuan Kerja
+app.get('/api/jenis-satuan-kerja', function(request, response){
+   var query = "SELECT * FROM [JenisSatker]";
+   execute.execQuery(query, response, null);
+});
+
+// Insert Jenis Satuan Kerja
+app.post('/api/jenis-satuan-kerja', function(request, response){
+   console.log("Query: Insert Jenis Satuan Kerja Data");
+   var query = "INSERT INTO [JenisSatker](nama, create_date, last_update, expired_date) VALUES('', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
+   execute.execQuery(query, response, null);
+});
+
+// Update Jenis Satuan Kerja
+app.put('/api/jenis-satuan-kerja/:id', function(request, response){
+   console.log("Query: Update Jenis Satuan Kerja Data");
+
+   var param = [
+      {name: 'id', sqlType: sql.Int, value: request.params.id},
+      {name: 'nama', sqlType: sql.VarChar, value: request.body.nama},
+      {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
+      {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update},
+      {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date}
+   ];
+
+   var query = "UPDATE [JenisSatker] SET nama = @nama, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// Delete Jenis Satuan Kerja
+app.delete('/api/jenis-satuan-kerja/:id', function(request, response){
+   console.log("Query: Delete Jenis Satuan Kerja Data");
+
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [JenisSatker] WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// CRUD Master Indikator
+// Get Master Indikator
+app.get('/api/master-indikator', function(request, response){
+   var query = "SELECT * FROM [MasterIndikator]";
+   execute.execQuery(query, response, null);
+});
+
+// Insert Master Indikator
+app.post('/api/master-indikator', function(request, response){
+   console.log("Query: Insert Master Indikator Data");
+   var query = "INSERT INTO [MasterIndikator](id_penyebut, id_pembilang, nama, deskripsi, default_bobot, create_date, last_update, expired_date) VALUES('', '', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
+   execute.execQuery(query, response, null);
+});
+
+// Update Master Indikator
+app.put('/api/master-indikator/:id', function(request, response){
+   console.log("Query: Update Master Indikator Data");
+
+   var param = [
+      {name: 'id', sqlType: sql.Int, value: request.params.id},
+      {name: 'id_penyebut', sqlType: sql.Int, value: request.body.id_penyebut},
+      {name: 'id_pembilang', sqlType: sql.Int, value: request.body.id_pembilang},
+      {name: 'nama', sqlType: sql.VarChar, value: request.body.nama},
+      {name: 'deskripsi', sqlType: sql.VarChar, value: request.body.deskripsi},
+      {name: 'default_bobot', sqlType: sql.VarChar, value: request.body.default_bobot},
+      {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
+      {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update},
+      {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date}
+   ];
+
+   var query = "UPDATE [MasterIndikator] SET id_penyebut = @id_penyebut, id_pembilang = @id_pembilang, nama = @nama, deskripsi = @deskripsi, default_bobot = @default_bobot, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// Delete Master Indikator
+app.delete('/api/master-indikator/:id', function(request, response){
+   console.log("Query: Delete Master Indikator Data");
+
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [MasterIndikator] WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+
+// CRUD Periode
+// Get Periode
+app.get('/api/periode', function(request, response){
+   var query = "SELECT * FROM [Periode]";
+   execute.execQuery(query, response, null);
+});
+
+// Insert Periode
+app.post('/api/periode', function(request, response){
+   console.log("Query: Insert Periode Data");
+   var query = "INSERT INTO [Periode](nama, create_date, last_update) VALUES('', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20))";
+   execute.execQuery(query, response, null);
+});
+
+// Update Periode
+app.put('/api/periode/:id', function(request, response){
+   console.log("Query: Update Jenis Satuan Kerja Data");
+
+   var param = [
+      {name: 'id', sqlType: sql.Int, value: request.params.id},
+      {name: 'nama', sqlType: sql.VarChar, value: request.body.nama},
+      {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
+      {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update}
+   ];
+
+   var query = "UPDATE [Periode] SET nama = @nama, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20) WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// Delete Periode
+app.delete('/api/periode/:id', function(request, response){
+   console.log("Query: Delete Periode Data");
+
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [Periode] WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// CRUD Satuan Kerja
+// Get Satuan Kerja
+app.get('/api/satuan-kerja', function(request, response){
+   var query = "SELECT * FROM [SatuanKerja]";
+   execute.execQuery(query, response, null);
+});
+
+// Jenis Satuan Kerja List
+app.get('/api/jenis-satuan-kerja-list', function(request, response){
+   var query = "SELECT id, nama as name FROM [JenisSatker]";
+   execute.execQuery(query, response, null);
+});
+
+// Indikator Satuan Kerja List
+// app.get('/api/indikator-satuan-kerja-list', function(request, response){
+//    var query = "SELECT id, nama as name FROM [Indikator_SatuanKerja]";
+//    execute.execQuery(query, response, null);
+// });
+
+// Insert Satuan Kerja
+app.post('/api/satuan-kerja', function(request, response){
+   console.log("Query: Insert Satuan Kerja Data");
+   var query = "INSERT INTO [SatuanKerja](id_jns_satker, id_induk_satker, nama, email, create_date, last_update, expired_date) VALUES('', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
+   execute.execQuery(query, response, null);
+});
+
+// Update Satuan Kerja
+app.put('/api/satuan-kerja/:id', function(request, response){
+   console.log("Query: Update Satuan Kerja Data");
+
+   var param = [
+      {name: 'id', sqlType: sql.Int, value: request.params.id},
+      {name: 'id_jns_satker', sqlType: sql.Int, value: request.body.id_jns_satker},
+      {name: 'id_induk_satker', sqlType: sql.Int, value: request.body.id_induk_satker},
+      {name: 'nama', sqlType: sql.VarChar, value: request.body.nama},
+      {name: 'email', sqlType: sql.VarChar, value: request.body.email},
+      {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
+      {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update},
+      {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date}
+   ];
+
+   var query = "UPDATE [SatuanKerja] SET id_jns_satker = @id_jns_satker, id_induk_satker = @id_induk_satker, nama = @nama, email = @email, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// Delete Satuan Kerja
+app.delete('/api/satuan-kerja/:id', function(request, response){
+   console.log("Query: Delete Satuan Kerja Data");
+
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [SatuanKerja] WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
 
 //Insert data
 app.post('/api/mahasiswa', function(request, response){
