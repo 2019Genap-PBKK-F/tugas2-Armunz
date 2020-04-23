@@ -17,6 +17,7 @@ module.exports.execQuery = function(req, res, param){
             request.query(req, function(err, response){
                 if(err){
                     console.log("Query error");
+                    res.send(err);
                 }
                 else{
                     res.send(response.recordset);

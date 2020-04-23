@@ -381,7 +381,7 @@ app.get('/api/master-indikator', function(request, response){
 // Insert Master Indikator
 app.post('/api/master-indikator', function(request, response){
    console.log("Query: Insert Master Indikator Data");
-   var query = "INSERT INTO [MasterIndikator](id_penyebut, id_pembilang, nama, deskripsi, default_bobot, create_date, last_update, expired_date) VALUES('', '', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
+   var query = "INSERT INTO [MasterIndikator](id_aspek, id_komponen_aspek, nama, deskripsi, id_pembilang, id_penyebut, default_bobot, create_date, last_update, expired_date) VALUES('', '', '', '', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
    execute.execQuery(query, response, null);
 });
 
@@ -391,17 +391,19 @@ app.put('/api/master-indikator/:id', function(request, response){
 
    var param = [
       {name: 'id', sqlType: sql.Int, value: request.params.id},
-      {name: 'id_penyebut', sqlType: sql.Int, value: request.body.id_penyebut},
-      {name: 'id_pembilang', sqlType: sql.Int, value: request.body.id_pembilang},
+      {name: 'id_aspek', sqlType: sql.Int, value: request.body.id_aspek},
+      {name: 'id_komponen_aspek', sqlType: sql.Int, value: request.body.id_komponen_aspek},
       {name: 'nama', sqlType: sql.VarChar, value: request.body.nama},
       {name: 'deskripsi', sqlType: sql.VarChar, value: request.body.deskripsi},
+      {name: 'id_pembilang', sqlType: sql.Int, value: request.body.id_pembilang},
+      {name: 'id_penyebut', sqlType: sql.Int, value: request.body.id_penyebut},
       {name: 'default_bobot', sqlType: sql.VarChar, value: request.body.default_bobot},
       {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
       {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update},
       {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date}
    ];
 
-   var query = "UPDATE [MasterIndikator] SET id_penyebut = @id_penyebut, id_pembilang = @id_pembilang, nama = @nama, deskripsi = @deskripsi, default_bobot = @default_bobot, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
+   var query = "UPDATE [MasterIndikator] SET id_aspek = @id_aspek, id_komponen_aspek = @id_komponen_aspek, nama = @nama, deskripsi = @deskripsi, id_pembilang = @id_pembilang, id_penyebut = @id_penyebut, default_bobot = @default_bobot, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -505,6 +507,56 @@ app.delete('/api/satuan-kerja/:id', function(request, response){
    var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
    var query = "DELETE FROM [SatuanKerja] WHERE id = @id";
    execute.execQuery(query, response, param);
+});
+
+
+// CRUD Aspek
+// Get Aspek
+app.get('/api/aspek', function(request, response){
+   var query = "SELECT * FROM [Aspek]";
+   execute.execQuery(query, response, null);
+});
+
+// List Aspek
+app.get('/api/aspek-list', function(request, response){
+   var query = "SELECT id, aspek as name FROM [Aspek]";
+   execute.execQuery(query, response, null);
+});
+
+// List Komponen Aspek
+app.get('/api/komponen-aspek-list', function(request, response){
+   var query = "SELECT id, komponen_aspek as name FROM [Aspek]";
+   execute.execQuery(query, response, null);
+});
+
+// Insert Aspek
+app.post('/api/aspek', function(request, response){
+   console.log("Query: Insert Aspek Data");
+   var query = "INSERT INTO [Aspek](aspek, komponen_aspek) VALUES('', '')";
+   execute.execQuery(query, response, null);
+});
+
+// Update Aspek
+app.put('/api/aspek/:id', function(request, response){
+   console.log("Query: Update Aspek Data");
+   // Parameter
+   var param = [
+      {name: 'id', sqlType: sql.Int, value: request.params.id},
+      {name: 'aspek', sqlType: sql.VarChar, value: request.body.aspek},
+      {name: 'komponen_aspek', sqlType: sql.VarChar, value: request.body.komponen_aspek},
+   ];
+   var query = "UPDATE [Aspek] SET aspek = @aspek, komponen_aspek = @komponen_aspek WHERE id = @id";
+   execute.execQuery(query, response, param);
+});
+
+// Delete Aspek
+app.delete('/api/aspek/:id', function(request, response){
+   console.log("Query: Delete Aspek Data");
+   // Parameter
+   var param = [{name: 'id', sqlType: sql.Int, value: request.params.id}];
+   var query = "DELETE FROM [Aspek] WHERE id = @id";
+   execute.execQuery(query, response, param);
+
 });
 
 //Insert data
