@@ -477,7 +477,7 @@ app.get('/api/jenis-satuan-kerja-list', function(request, response){
 // Insert Satuan Kerja
 app.post('/api/satuan-kerja', function(request, response){
    console.log("Query: Insert Satuan Kerja Data");
-   var query = "INSERT INTO [SatuanKerja](id_jns_satker, id_induk_satker, nama, email, create_date, last_update, expired_date) VALUES('', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
+   var query = "INSERT INTO [SatuanKerja](id_satker, nama, level_unit, id_induk_satker, id_jns_satker, create_date, last_update, expired_date) VALUES('', '', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
    execute.execQuery(query, response, null);
 });
 
@@ -487,16 +487,17 @@ app.put('/api/satuan-kerja/:id', function(request, response){
 
    var param = [
       {name: 'id', sqlType: sql.Int, value: request.params.id},
-      {name: 'id_jns_satker', sqlType: sql.Int, value: request.body.id_jns_satker},
-      {name: 'id_induk_satker', sqlType: sql.Int, value: request.body.id_induk_satker},
+      {name: 'id_satker', sqlType: sql.VarChar, value: request.body.id_satker},
       {name: 'nama', sqlType: sql.VarChar, value: request.body.nama},
-      {name: 'email', sqlType: sql.VarChar, value: request.body.email},
+      {name: 'level_unit', sqlType: sql.Int, value: request.body.level_unit},
+      {name: 'id_induk_satker', sqlType: sql.VarChar, value: request.body.id_induk_satker},
+      {name: 'id_jns_satker', sqlType: sql.Int, value: request.body.id_jns_satker},
       {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
       {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update},
       {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date}
    ];
 
-   var query = "UPDATE [SatuanKerja] SET id_jns_satker = @id_jns_satker, id_induk_satker = @id_induk_satker, nama = @nama, email = @email, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
+   var query = "UPDATE [SatuanKerja] SET id_satker = @id_satker, nama = @nama, level_unit = @level_unit, id_induk_satker = @id_induk_satker, id_jns_satker = @id_jns_satker, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
