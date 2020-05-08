@@ -560,6 +560,30 @@ app.delete('/api/aspek/:id', function(request, response){
 
 });
 
+// List Dosen
+app.get('/api/dosen', function(request, response){
+   var query = "SELECT * FROM [Dosen]";
+   execute.execQuery(query, response, null);
+});
+
+// List Abmas
+app.get('/api/abmas', function(request, response){
+   var query = "SELECT * FROM [Abmas]";
+   execute.execQuery(query, response, null);
+});
+
+// List Penelitian
+app.get('/api/penelitian', function(request, response){
+   var query = "SELECT * FROM [Penelitian]";
+   execute.execQuery(query, response, null);
+});
+
+// List Publikasi
+app.get('/api/publikasi', function(request, response){
+   var query = "SELECT * FROM [Publikasi]";
+   execute.execQuery(query, response, null);
+});
+
 //Insert data
 app.post('/api/mahasiswa', function(request, response){
    console.log("Query: Insert Data");
