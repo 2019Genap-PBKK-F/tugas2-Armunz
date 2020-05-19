@@ -477,7 +477,7 @@ app.get('/api/jenis-satuan-kerja-list', function(request, response){
 // Insert Satuan Kerja
 app.post('/api/satuan-kerja', function(request, response){
    console.log("Query: Insert Satuan Kerja Data");
-   var query = "INSERT INTO [SatuanKerja](id_satker, nama, level_unit, id_induk_satker, id_jns_satker, create_date, last_update, expired_date) VALUES('', '', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '')";
+   var query = "INSERT INTO [SatuanKerja](id_satker, nama, level_unit, id_induk_satker, id_jns_satker, create_date, last_update, expired_date, email) VALUES('', '', '', '', '', CONVERT(varchar, GETDATE(), 20), CONVERT(varchar, GETDATE(), 20), '', '')";
    execute.execQuery(query, response, null);
 });
 
@@ -494,10 +494,11 @@ app.put('/api/satuan-kerja/:id', function(request, response){
       {name: 'id_jns_satker', sqlType: sql.Int, value: request.body.id_jns_satker},
       {name: 'create_date', sqlType: sql.VarChar, value: request.body.create_date},
       {name: 'last_update', sqlType: sql.VarChar, value: request.body.last_update},
-      {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date}
+      {name: 'expired_date', sqlType: sql.VarChar, value: request.body.expired_date},
+      {name: 'email', sqlType: sql.VarChar, value: request.body.email}
    ];
 
-   var query = "UPDATE [SatuanKerja] SET id_satker = @id_satker, nama = @nama, level_unit = @level_unit, id_induk_satker = @id_induk_satker, id_jns_satker = @id_jns_satker, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date WHERE id = @id";
+   var query = "UPDATE [SatuanKerja] SET id_satker = @id_satker, nama = @nama, level_unit = @level_unit, id_induk_satker = @id_induk_satker, id_jns_satker = @id_jns_satker, create_date = @create_date, last_update = CONVERT(varchar, GETDATE(), 20), expired_date = @expired_date, email = @email WHERE id = @id";
    execute.execQuery(query, response, param);
 });
 
@@ -523,6 +524,7 @@ app.get('/api/aspek-list', function(request, response){
    var query = "SELECT id, aspek as name FROM [Aspek]";
    execute.execQuery(query, response, null);
 });
+
 
 // List Komponen Aspek
 app.get('/api/komponen-aspek-list', function(request, response){
@@ -591,6 +593,13 @@ app.post('/api/mahasiswa', function(request, response){
    execute.execQuery(query, response, null);
 });
 
+// Kontrak Kinerja
+app.get('/api/kontrak-kinerja/:id', function(request, response){
+   var query = "SELECT i.id_satker, m.id_aspek, m.id_komponen_aspek, m.nama, i.bobot, i.target, i.capaian FROM [Indikator_SatuanKerja] as i, [MasterIndikator] as m WHERE i.id_master = m.id AND i.id_satker=" + request.params.id;
+   execute.execQuery(query, response, null);
+});
+
+
 // Update data
 app.put('/api/mahasiswa/:id', function(request, response){
    console.log("Query: Update Data");
@@ -618,6 +627,7 @@ app.delete('/api/mahasiswa/:id', function(request, response){
    execute.execQuery(query, response, param);
 
 });
+
 
 app.listen(port, function(){
    console.log("Server running at http://10.199.14.46:8006/");
