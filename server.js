@@ -611,9 +611,9 @@ app.get('/api/kontrak-kinerja/:id', function(request, response){
 // Kontrak Kinerja Dropdown
 app.get('/api/kontrak-kinerja-dropdown/:id', function(request, response){
    var param = [
-      {name: 'id_satker', sqlType: sql.Int, value: request.params.id}
+      {name: 'id_satker', sqlType: sql.VarChar, value: request.params.id}
    ];
-
+   // console.log(param)
    var query = "SELECT id, id_satker, nama FROM SatuanKerja WHERE (id_satker = @id_satker OR id_induk_satker = @id_satker) AND (nama LIKE 'Departemen%' OR nama LIKE 'Fakultas%') ORDER BY id";
    execute.execQuery(query, response, param);
 });
