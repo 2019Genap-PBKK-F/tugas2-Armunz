@@ -2,10 +2,19 @@ var express = require('express');
 var execute = require('./controller');
 var bodyParser = require('body-parser');
 var sql = require('mssql');
+var session = require('express-session');
+var dbConfig = require('./config');
 
 var port = '8006';
 var cors = require("cors");
 var app = express();
+
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true
+}));
+
 app.use(bodyParser.json());
 
 app.use(cors());
@@ -255,7 +264,7 @@ app.delete('/api/indikator-periode/:id', function(request, response){
 // CRUD  Indikator Satuan Kerja
 // Get Indikator Satuan Kerja
 app.get('/api/indikator-satuan-kerja', function(request, response){
-   var query = "SELECT * FROM [Indikator_SatuanKerja]";
+   var query = "SELECT id, id_periode, id_master, id_satker, bobot, target, capaian, CASE WHEN target > 0 THEN CONVERT(varchar, [capaian]/[target] * 100) + '%' ELSE CONVERT(varchar, 0) + '%' END as Persentase, last_update FROM [Indikator_SatuanKerja]";
    execute.execQuery(query, response, null);
 });
 
@@ -595,10 +604,19 @@ app.post('/api/mahasiswa', function(request, response){
 
 // Kontrak Kinerja
 app.get('/api/kontrak-kinerja/:id', function(request, response){
-   var query = "SELECT i.id_satker, m.id_aspek, m.id_komponen_aspek, m.nama, i.bobot, i.target, i.capaian FROM [Indikator_SatuanKerja] as i, [MasterIndikator] as m WHERE i.id_master = m.id AND i.id_satker=" + request.params.id;
+   var query = "SELECT i.id_satker, m.id_aspek, m.id_komponen_aspek, m.nama, i.bobot, i.target, i.capaian, CASE WHEN target > 0 THEN CONVERT(varchar, i.capaian/i.target * 100) + '%' ELSE CONVERT(varchar, 0) + '%' END as Persentase FROM [Indikator_SatuanKerja] as i, [MasterIndikator] as m WHERE i.id_master = m.id AND i.id_satker=" + request.params.id;
    execute.execQuery(query, response, null);
 });
 
+// Kontrak Kinerja Dropdown
+app.get('/api/kontrak-kinerja-dropdown/:id', function(request, response){
+   var param = [
+      {name: 'id_satker', sqlType: sql.Int, value: request.params.id}
+   ];
+
+   var query = "SELECT id, id_satker, nama FROM SatuanKerja WHERE (id_satker = @id_satker OR id_induk_satker = @id_satker) AND (nama LIKE 'Departemen%' OR nama LIKE 'Fakultas%') ORDER BY id";
+   execute.execQuery(query, response, param);
+});
 
 // Update data
 app.put('/api/mahasiswa/:id', function(request, response){
@@ -628,6 +646,26 @@ app.delete('/api/mahasiswa/:id', function(request, response){
 
 });
 
+app.post('/api/login', function(request, response){
+   var param = [
+      {name: 'email', sqlType: sql.VarChar, value:request.body.username},
+      {name: 'password', sqlType: sql.VarChar, value:request.body.password}
+   ];
+   var query = "SELECT id_satker, nama FROM SatuanKerja WHERE email = @email AND email = @password";
+   execute.execQuery(query, response, param);
+});
+
+app.get('/api/logout', function(request, response, next){
+   if (request.session){
+      request.session.destroy(function(err){
+         if(err){
+            return console.log(err);
+         }else{
+            response.send("Logout");
+         }
+      });
+   }
+});
 
 app.listen(port, function(){
    console.log("Server running at http://10.199.14.46:8006/");
